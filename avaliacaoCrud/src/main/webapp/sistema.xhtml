@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+<h1 style="text-align:center;"> Avaliacao Fatoria</h1>
+</h:head>
+
+<h:body>
+
+	<h:form id="form1">
+		<p:growl id="msgs" showDetail="false" />
+		<p:accordionPanel dynamic="true" cache="true">
+			<p:tab title="Cadastra Produtos">
+				<h:panelGrid columns="2" cellpadding="02">
+					<h:outputText value="Nome" />
+					<p:inputText value="#{mb.produto.nome}" />					
+					<h:outputText value="Preco" />
+					<p:inputText value="#{mb.produto.preco}" />
+					<h:outputText value="Quantidade" />
+					<p:inputText value="#{mb.produto.quantidade}" />
+					<h:outputText value="Data de Entrada" />
+					<p:calendar id="dataCadastro" value="#{mb.produto.dataCadastro}"
+						navigator="true" pattern="dd/MM/yyyy" required="true"
+						requiredMessage="Data é obrigatório!" showOn="button"
+						maxlength="10" onkeypress="mascaraData( this, event )" />
+					<p:commandButton value="Gravar" action="#{mb.gravar}" ajax="true"
+						icon="ui-icon-disk" styleClass="ui-priority-primary"
+						update=":form1" ></p:commandButton>
+				</h:panelGrid>
+			</p:tab>
+		</p:accordionPanel>
+	</h:form>
+
+
+	<h:form id="form2">
+		<p:accordionPanel dynamic="true" cache="true">
+			<p:tab title="Lista de Produtos">
+				<p:dataTable rows="15" paginator="true" value="#{mb.lista}"
+					var="linha">
+
+					<p:column headerText="Nome" sortBy="#{linha.nome}"
+                             filterBy="#{linha.nome}">
+						<h:outputText value="#{linha.nome}" />
+					</p:column>
+					<p:column headerText="Preco">
+						<h:outputText value="#{linha.preco}" />
+					</p:column>
+					<p:column headerText="Quantidade">
+						<h:outputText value="#{linha.quantidade}" />
+					</p:column>
+					<p:column headerText="Data de entrada" >
+						<h:outputText value="#{linha.dataCadastro}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Acoes" style="text-align: center">
+						<p:commandButton value="Excluir" action="#{mb.excluir(linha)}"
+							ajax="false" icon="ui-icon-search"></p:commandButton>
+						<p:commandButton value="Alterar" ajax="true"
+							onclick="PF('alterar').show()" update=":form3"
+							icon="ui-icon-search">
+							<f:setPropertyActionListener value="#{linha}"
+								target="#{mb.produto}">
+
+							</f:setPropertyActionListener>
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
+				<br />
+				<p:commandButton value="Atualizar Lista" action="#{mb.listar}"
+					ajax="true" update=":form2" icon="ui-icon-search"></p:commandButton>
+			</p:tab>
+
+		</p:accordionPanel>
+	</h:form>
+
+	<p:dialog header="Alterar" widgetVar="alterar" modal="true">
+		<h:form id="form3">
+			<h:inputHidden value="#{mb.produto.idProduto}"></h:inputHidden>
+			<p:panelGrid columns="2">
+				<h:outputText value="Nome" />
+				<p:inputText value="#{mb.produto.nome}"></p:inputText>
+
+				<h:outputText value="Preco" />
+				<p:inputText value="#{mb.produto.preco}"></p:inputText>
+
+				<h:outputText value="Quantidade" />
+				<p:inputText value="#{mb.produto.quantidade}"></p:inputText>
+
+				<h:outputText value="Data de Entrada" />
+				<p:inputText value="#{mb.produto.dataCadastro}"
+					onkeypress="mascaraData( this, event )">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</p:inputText>
+
+
+				<p:commandButton value="Alterar" ajax="true" update=":form2, :form3"
+					icon="ui-icon-search" onclick="PF('alterar').hide()"
+					action="#{mb.alterar}">
+				</p:commandButton>
+
+				<p:growl></p:growl>
+			</p:panelGrid>
+
+		</h:form>
+	</p:dialog>
+
+
+
+
+	<script type="text/javascript">
+		function mascaraData(campo, e) {
+			var kC = (document.all) ? event.keyCode : e.keyCode;
+			var data = campo.value;
+
+			if (kC != 8 || kC != 46) {
+				if (data.length == 2) {
+					campo.value = data += '/';
+				} else if (data.length == 5) {
+					campo.value = data += '/';
+				} else
+					campo.value = data;
+			}
+		}
+	</script>
+
+
+</h:body>
+
+
+
+</html>
